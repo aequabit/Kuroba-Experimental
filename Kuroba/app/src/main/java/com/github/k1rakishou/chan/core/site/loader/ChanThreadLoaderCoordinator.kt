@@ -41,6 +41,7 @@ import com.github.k1rakishou.common.EmptyBodyResponseException
 import com.github.k1rakishou.common.FirewallDetectedException
 import com.github.k1rakishou.common.ModularResult
 import com.github.k1rakishou.common.ModularResult.Companion.Try
+import com.github.k1rakishou.common.addOrReplaceCookieHeader
 import com.github.k1rakishou.common.errorMessageOrClassName
 import com.github.k1rakishou.common.suspendCall
 import com.github.k1rakishou.core_logger.Logger
@@ -178,6 +179,9 @@ class ChanThreadLoaderCoordinator(
         val requestBuilder = Request.Builder()
           .url(chanLoadUrl.url)
           .get()
+
+        if (site.name() == "8chan.moe")
+          requestBuilder.addOrReplaceCookieHeader("TOS20250418=1")
 
         siteResolver.findSiteForUrl(chanLoadUrl.urlString)?.let { site ->
           site.requestModifier().modifyCatalogOrThreadGetRequest(

@@ -19,6 +19,7 @@ package com.github.k1rakishou.chan.core.site.http
 import com.github.k1rakishou.chan.core.base.okhttp.ProxiedOkHttpClient
 import com.github.k1rakishou.common.AppConstants
 import com.github.k1rakishou.common.ModularResult.Companion.Try
+import com.github.k1rakishou.common.addOrReplaceCookieHeader
 import com.github.k1rakishou.common.suspendCall
 import com.github.k1rakishou.core_logger.Logger
 import com.github.k1rakishou.model.data.descriptor.ChanDescriptor
@@ -52,6 +53,9 @@ class HttpCallManager @Inject constructor(
       try {
         val requestBuilder = Request.Builder()
         requestBuilder.url(httpCall.site.endpoints().reply(replyChanDescriptor))
+
+        if (httpCall.site.name() == "8chan.moe")
+          requestBuilder.addOrReplaceCookieHeader("TOS20250418=1")
 
         try {
           httpCall.setup(
@@ -105,7 +109,7 @@ class HttpCallManager @Inject constructor(
     
     httpCall.setup(requestBuilder, null)
     httpCall.site.requestModifier().modifyHttpCall(httpCall, requestBuilder)
-    
+
     return makeHttpCallInternal(requestBuilder, httpCall)
   }
   
@@ -117,6 +121,9 @@ class HttpCallManager @Inject constructor(
     return withContext(Dispatchers.IO) {
       val request = requestBuilder
         .build()
+
+      if (httpCall.site.name() == "8chan.moe")
+        requestBuilder.addOrReplaceCookieHeader("TOS20250418=1")
 
       val (response, duration) = Try {
         return@Try measureTimedValue { proxiedOkHttpClient.get().okHttpClient().suspendCall(request) }

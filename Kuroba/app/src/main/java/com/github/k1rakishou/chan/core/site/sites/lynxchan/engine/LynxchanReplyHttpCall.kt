@@ -14,6 +14,7 @@ import com.github.k1rakishou.chan.ui.captcha.CaptchaSolution
 import com.github.k1rakishou.chan.utils.HashingUtil
 import com.github.k1rakishou.common.ModularResult
 import com.github.k1rakishou.common.StringUtils
+import com.github.k1rakishou.common.addOrReplaceCookieHeader
 import com.github.k1rakishou.common.groupOrNull
 import com.github.k1rakishou.common.isNotNullNorEmpty
 import com.github.k1rakishou.core_logger.Logger
@@ -58,6 +59,9 @@ class LynxchanReplyHttpCall(
     if (!replyManager.get().containsReply(chanDescriptor)) {
       throw IOException("No reply found for chanDescriptor=$chanDescriptor")
     }
+
+    if (site.name() == "8chan.moe")
+      requestBuilder.addOrReplaceCookieHeader("TOS20250418=1")
 
     replyResponse.siteDescriptor = chanDescriptor.siteDescriptor()
     replyResponse.boardCode = chanDescriptor.boardCode()

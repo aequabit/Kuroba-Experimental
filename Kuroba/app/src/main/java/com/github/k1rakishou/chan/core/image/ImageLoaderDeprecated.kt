@@ -44,6 +44,7 @@ import com.github.k1rakishou.common.ModularResult
 import com.github.k1rakishou.common.ModularResult.Companion.Try
 import com.github.k1rakishou.common.ModularResult.Companion.value
 import com.github.k1rakishou.common.StringUtils
+import com.github.k1rakishou.common.addOrReplaceCookieHeader
 import com.github.k1rakishou.common.errorMessageOrClassName
 import com.github.k1rakishou.common.isCoroutineCancellationException
 import com.github.k1rakishou.common.isExceptionImportant
@@ -566,6 +567,9 @@ class ImageLoaderDeprecated(
       .url(url)
       .get()
 
+    if (site?.name() == "8chan.moe")
+      requestBuilder.addOrReplaceCookieHeader("TOS20250418=1")
+
     if (site != null && requestModifier != null) {
       requestModifier.modifyThumbnailGetRequest(site, requestBuilder)
     }
@@ -620,6 +624,7 @@ class ImageLoaderDeprecated(
     return url == "https://endchan.net/favicon.ico"
       || url == "https://endchan.org/favicon.ico"
       || url == "https://yeshoney.xyz/favicon.ico"
+      || url == "https://8chan.moe/favicon.ico"
   }
 
   private suspend fun tryLoadFromDiskCacheOrNull(

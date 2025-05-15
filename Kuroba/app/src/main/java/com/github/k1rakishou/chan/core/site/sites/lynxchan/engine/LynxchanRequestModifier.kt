@@ -14,6 +14,9 @@ open class LynxchanRequestModifier(
   override fun modifyHttpCall(httpCall: HttpCall, requestBuilder: Request.Builder) {
     super.modifyHttpCall(httpCall, requestBuilder)
 
+    if (site.name() == "8chan.moe")
+      requestBuilder.addOrReplaceCookieHeader("TOS20250418=1")
+
     addCookies(requestBuilder)
   }
 

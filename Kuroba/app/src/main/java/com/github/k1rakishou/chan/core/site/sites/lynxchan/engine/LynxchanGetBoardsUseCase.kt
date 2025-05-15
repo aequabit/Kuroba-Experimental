@@ -4,6 +4,7 @@ import com.github.k1rakishou.chan.core.base.okhttp.RealProxiedOkHttpClient
 import com.github.k1rakishou.chan.core.usecase.ISuspendUseCase
 import com.github.k1rakishou.common.AppConstants
 import com.github.k1rakishou.common.ModularResult
+import com.github.k1rakishou.common.addOrReplaceCookieHeader
 import com.github.k1rakishou.common.parallelForEach
 import com.github.k1rakishou.common.suspendConvertIntoJsonObjectWithAdapter
 import com.github.k1rakishou.core_logger.Logger
@@ -46,10 +47,14 @@ class LynxchanGetBoardsUseCase(
     siteDescriptor: SiteDescriptor,
     boardsEndpoint: HttpUrl
   ): SiteBoards {
-    val request = Request.Builder()
+    val requestBuilder = Request.Builder()
       .url(boardsPageEndpoint(boardsEndpoint = boardsEndpoint, page = 1))
       .get()
-      .build()
+
+    if (siteDescriptor.siteName == "8chan.moe")
+      requestBuilder.addOrReplaceCookieHeader("TOS20250418=1")
+
+    val request = requestBuilder.build()
 
     val totalLynxchanBoards = mutableListOf<LynxchanBoardsData>()
     val lynxchanBoardsPageAdapter = moshi.adapter<LynxchanBoardsPage>(LynxchanBoardsPage::class.java)

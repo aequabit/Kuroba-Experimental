@@ -150,6 +150,9 @@ abstract class SiteRequestModifier<T : Site>(
   private fun addCloudFlareCookie(requestBuilder: Request.Builder) {
     val domainOrHost = requestBuilder.build().url.let { url -> url.domain() ?: url.host }
 
+    if (site.name() == "8chan.moe")
+      requestBuilder.addOrReplaceCookieHeader("TOS20250418=1")
+
     val cookieForDomain = site
       .getSettingBySettingId<MapSetting>(SiteSetting.SiteSettingId.CloudFlareClearanceCookie)
       ?.get(domainOrHost)

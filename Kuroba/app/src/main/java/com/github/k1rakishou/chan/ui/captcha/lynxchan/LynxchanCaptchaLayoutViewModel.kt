@@ -17,6 +17,7 @@ import com.github.k1rakishou.chan.core.site.sites.lynxchan.engine.LynxchanSite
 import com.github.k1rakishou.common.BadStatusResponseException
 import com.github.k1rakishou.common.EmptyBodyResponseException
 import com.github.k1rakishou.common.ModularResult
+import com.github.k1rakishou.common.addOrReplaceCookieHeader
 import com.github.k1rakishou.common.isNotNullNorEmpty
 import com.github.k1rakishou.common.removeAllAfterFirstInclusive
 import com.github.k1rakishou.common.suspendCall
@@ -166,6 +167,9 @@ class LynxchanCaptchaLayoutViewModel(
         site.requestModifier().modifyCaptchaGetRequest(site = site, requestBuilder = requestBuilder)
       }
 
+      if (site?.name() == "8chan.moe")
+        requestBuilder.addOrReplaceCookieHeader("TOS20250418=1")
+
       val response = proxiedOkHttpClient.okHttpClient().suspendCall(request = requestBuilder.build())
       if (!response.isSuccessful) {
         throw BadStatusResponseException(status = response.code)
@@ -222,6 +226,9 @@ class LynxchanCaptchaLayoutViewModel(
           .url(lynxchanCaptcha.bypassEndpoint)
           .get()
 
+        if (chanDescriptor.siteName() == "8chan.moe")
+          requestBuilder.addOrReplaceCookieHeader("TOS20250418=1")
+
         val site = siteManager.bySiteDescriptor(chanDescriptor.siteDescriptor())
         if (site != null) {
           site.requestModifier().modifyCaptchaGetRequest(site = site, requestBuilder = requestBuilder)
@@ -270,6 +277,9 @@ class LynxchanCaptchaLayoutViewModel(
       .url(captchaEndpoint)
       .get()
 
+    if (captchaEndpoint.host == "8chan.moe")
+      requestBuilder.addOrReplaceCookieHeader("TOS20250418=1")
+
     val response = proxiedOkHttpClient.okHttpClient().suspendCall(request = requestBuilder.build())
     if (!response.isSuccessful) {
       throw BadStatusResponseException(status = response.code)
@@ -296,7 +306,6 @@ class LynxchanCaptchaLayoutViewModel(
   private fun extractLynxchanCaptcha(response: Response): LynxchanCaptchaJson? {
     val captchaData = mutableListOf<String>()
     var currentResponse: Response? = response
-
     while (currentResponse != null) {
       val setCookieHeader = currentResponse.headers
         .filter { (name, _) -> name.equals("set-cookie", ignoreCase = true) }

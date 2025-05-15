@@ -188,6 +188,7 @@ class KurobaImageFromNetworkLoaderImpl(
     return url == "https://endchan.net/favicon.ico"
       || url == "https://endchan.org/favicon.ico"
       || url == "https://yeshoney.xyz/favicon.ico"
+      || url == "https://8chan.moe/favicon.ico"
   }
 
   companion object {
