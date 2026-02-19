@@ -156,6 +156,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <data android:host="archive.wakarimasen.moe" />
                 <data android:host="www.archive.wakarimasen.moe" />
 
+                <data android:host="8chan.moe" />
+                <data android:host="www.8chan.moe" />
+
             </intent-filter>
         </activity>
 
